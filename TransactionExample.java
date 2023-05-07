@@ -12,14 +12,14 @@ public class TransactionExample {
 		// Load the Postgresql driver
 				Class.forName("org.postgresql.Driver");
 				
-				// Connect to the default database with credentials
+				// Connect to the PostgreSQL database with credentials
 				
 				Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/mydatabase","postgres","newroot");
 		
-				// For atomicity
+				// For Atomicity
 				conn.setAutoCommit(false);
 				
-				// For isolation
+				// For Isolation
 				conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 				
 				Statement stmt = null;
@@ -33,32 +33,30 @@ public class TransactionExample {
 					
 					
                     
-                    //6.We add a depot (d100, Chicago, 100) in Depot and (p1, d100,100) in Stock
-
-					stmt.executeUpdate("INSERT INTO depot VALUES ('d1','New York',9000)");
-					stmt.executeUpdate("INSERT INTO stock VALUES ('p1','d1',1000)");
+                                  //6.We add a depot (d100, Chicago, 100) in Depot and (p1, d100,100) in Stock
+				  stmt.executeUpdate("INSERT INTO depot VALUES ('d1','New York',9000)");
+				  stmt.executeUpdate("INSERT INTO stock VALUES ('p1','d1',1000)");
 					
-				   stmt.executeUpdate("INSERT INTO depot VALUES ('d100','Chicago',100)");
-				   stmt.executeUpdate("INSERT INTO stock VALUES ('p1','d100',100)");
+				  stmt.executeUpdate("INSERT INTO depot VALUES ('d100','Chicago',100)");
+				  stmt.executeUpdate("INSERT INTO stock VALUES ('p1','d100',100)");
 				    
-				  //4.The depot d1 changes its name to dd1 in Depot and Stock.
+		                  //4.The depot d1 changes its name to dd1 in Depot and Stock.
+				  stmt.executeUpdate("UPDATE depot SET depid='dd1' WHERE depid ='d1'");
 					
-					stmt.executeUpdate("UPDATE depot SET depid='dd1' WHERE depid ='d1'");
-					
-					//2.The depot dd1 is deleted from Depot and Stock.
-					
-					
-				   stmt.executeUpdate("DELETE FROM depot WHERE depid ='dd1'");
+		                  //2.The depot dd1 is deleted from Depot and Stock.
+				  stmt.executeUpdate("DELETE FROM depot WHERE depid ='dd1'");
 				}
+		
 				catch(SQLException e) {
-					System.out.println("Transaction Failed, PERFORMING ROLLBACK \n"+e);
 					
+					System.out.println("Transaction Failed, PERFORMING ROLLBACK \n"+e);
 					// for atomicity
 					conn.rollback();
 					stmt.close();
 					conn.close();
 					return;
 				}
+		
 				System.out.println("Transaction Successful, PERFORMING COMMIT \n");
 				conn.commit();
 				stmt.close();
